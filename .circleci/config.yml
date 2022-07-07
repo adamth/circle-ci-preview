@@ -13,12 +13,16 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
+          key: circle-ci-preview-{{ checksum "package-lock.json" }}
       - run: npm install
+
+      - save_cache:
+          key: circle-ci-preview-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+
         # 👇 Runs the Chromatic CLI
-      - run: yarn chromatic --project-token=${CHROMATIC_PROJECT_TOKEN}
+      - run: npx chromatic --exit-zero-on-changes --project-token=${CHROMATIC_PROJECT_TOKEN}
 
 
 workflows:
